@@ -1,67 +1,96 @@
-#include <iostream>
-#include <list>
-
-
-using namespace std;
-
-#include <cassert>
- 
-
 template<typename T>
 class TPQueue
-class TPQueue : private list<T>
 {
   // Сюда помещается описание структуры "Очередь с приоритетами"
+  private:
+    T* arr;          
+    int size;       
+    int begin,      
+	end;        
+    int count;       
 public:
-    TPQueue() {};          // конструктор
-    ~TPQueue() {};         // деструктор
-
-    void push(const T &); // добавить элемент в очередь
-    T pop();              // удалить элемент из очереди
-    T get() const;        // прочитать первый элемент
-    bool isEmpty() const; // пустая ли очередь?
+    TPQueue(int = 100);          
+    ~TPQueue();                 
+    void push(const T&); 
+    T pop();              
+    T get() const;        
+    bool isEmpty() const;      
+    bool isFull() const; 
 };
-
-// функция добавления элемента в очередь
 template<typename T>
-void TPQueue<T>::push(const T & item) {
-        // if this item is first in queue
-    if (this->empty()) {
-        this->push_back(item);
+TPQueue<T>::TPQueue(int sizeQueue) :
+    size(sizeQueue),
+    begin(0), end(0), count(0)
+{   
+    arr = new T[size + 1];
+}
+template<typename T>
+TPQueue<T>::~TPQueue()
+{
+    delete[] arr;
+}
+template<typename T>
+void TPQueue<T>::push(const T& item)
+{
+	assert(count < size);
 
-        return;
-    }
-        // if this item should be middle in queue
-    for (auto iter = this->begin(); iter != this->end(); iter++) {
-        if (iter->prior < item.prior) {
-            this->insert(iter, item);
-            return;
-        }
-    }
-        // if last
-    this->push_back(item);
+	if (count == 0)
+	{
+		arr[end++] = item;
+		count++;
+	}
+	else
+	{
+		int i = end-1;
+		bool pr = 0;
+		while (i>=begin && item.prior > arr[i].prior)
+		{
+			pr = 1;
+			arr[i + 1] = arr[i];
+			arr[i] = item;
+			i--;
+		}
+		if (pr == 0)
+			arr[end] = item;
+		end++;
+		count++;
+	}
+	if (end > size)
+		end -= size + 1; 
+}
+template<typename T>
+T TPQueue<T>::pop()
+{
+
+    assert(count > 0);
+
+	T item = arr[begin++];
+	count--;
+
+    if (begin > size)
+        begin -= size + 1;
+
+    return item;
 }
 
-// функция удаления элемента из очереди
-template<typename T>
-T TPQueue<T>::pop() {
-    T elem = this->front();
-    this->pop_front();
 
-    return elem;
+template<typename T>
+T TPQueue<T>::get() const
+{
+
+    assert(count > 0);
+    return arr[begin];
+}
+template<typename T>
+bool TPQueue<T>::isEmpty() const
+{
+    return count == 0;
 }
 
-// функция чтения элемента на первой позиции
 template<typename T>
-T TPQueue<T>::get() const {
-
-    return this->front();
-}
-
-// функция проверки очереди на пустоту
-template<typename T>
-bool TPQueue<T>::isEmpty() const {
-    return this->empty();
+bool TPQueue<T>::isFull() const
+{
+    return count == size;
 }
 
 
@@ -70,6 +99,5 @@ struct SYM
 	char ch;
 	int  prior;
 }; 
-    char ch;
-    int prior;
 };
+
