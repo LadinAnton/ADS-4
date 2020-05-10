@@ -1,6 +1,7 @@
-@@ -1,14 +1,113 @@
-#include <cassert>
+#include <iostream>
+using namespace std;
 
+#include <cassert>
 
 template<typename T>
 class TPQueue
@@ -49,18 +50,20 @@ void TPQueue<T>::push(const T & item)
     assert( count < size );
 
     arr[end] = item;
-	for (int i = end; i>0; i--)
-	{
-		if (arr[i].prior > arr[i-1].prior)
-		{
-			T tmp = arr[i-1];
-			arr[i-1] = arr[i];
-			arr[i] = tmp;
-		}
-	}
 
-                     count++;
-                     end++;
+    for (int i = end; i > 0; i--)
+    {
+        if (arr[i].prior > arr[i-1].prior)
+        {
+            T tmp = arr[i-1];
+            arr[i-1] = arr[i];
+            arr[i] = tmp;
+        }
+    }
+
+
+    count++;
+    end++;
 
     // проверка кругового заполнения очереди
     if (end > size)
@@ -107,12 +110,11 @@ bool TPQueue<T>::isFull() const
   return count==size;
 }
 
-
-
 struct SYM
 {
 	char ch;
 	int  prior;
 }; 
-}; 
+	int prior;
+};
 
